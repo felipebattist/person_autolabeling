@@ -153,9 +153,9 @@ image_files = glob.glob(folder_path + "/*.jpg")  # Modify the extension if neede
 # Read existing bounding boxes from the CSV file
 existing_images = set()
 with open("bounding_boxes.csv", "r") as csv_file:
-    csv_reader = csv.DictReader(csv_file)
+    csv_reader = csv.reader(csv_file)
     for row in csv_reader:
-        existing_images.add(row["File Path"])
+        existing_images.add(row[0])  # Modify the index based on the position of the image file path
 
 # Create a CSV file and write header
 csv_file = open("bounding_boxes.csv", "a", newline="")
@@ -166,7 +166,7 @@ for image_file in image_files:
     if image_file in existing_images:
         print(f"Skipping {image_file} (already processed)")
         continue
-
+    
     count = 0
     img = cv2.imread(image_file)
     img_copy = img.copy()
