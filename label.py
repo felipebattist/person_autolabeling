@@ -30,16 +30,22 @@ def mouse_callback(event, x, y, flags, param):
 
         if selected_box_index == -1:
             current_tl = [(x, y)]
+            current_br = [(x, y)]  # Assign the same coordinates initially
 
     elif event == cv2.EVENT_LBUTTONUP:
         current_br = [(x, y)]
-        if selected_box_index == -1:
-            tl_list.append(current_tl)
-            br_list.append(current_br)
-            object_list.append(current_object)
-        else:
-            tl_list[selected_box_index] = current_tl
-            br_list[selected_box_index] = current_br
+
+        if current_tl != current_br:  # Only add non-zero size bounding boxes
+            current_tl, current_br = swap_coordinates(current_tl[0], current_br[0])  # Swap coordinates if necessary
+            current_object = ""  # Set your desired object label here
+
+            if selected_box_index == -1:
+                tl_list.append(current_tl)
+                br_list.append(current_br)
+                object_list.append(current_object)
+            else:
+                tl_list[selected_box_index] = current_tl
+                br_list[selected_box_index] = current_br
 
         img = img_copy.copy()
         for i in range(len(tl_list)):
@@ -47,6 +53,16 @@ def mouse_callback(event, x, y, flags, param):
         if selected_box_index != -1:
             cv2.rectangle(img, tl_list[selected_box_index][0], br_list[selected_box_index][0], (255, 0, 0), 2)
         cv2.imshow("Image", img)
+
+def swap_coordinates(tl, br):
+    """Swap the coordinates if necessary to ensure consistent bounding box format"""
+    if tl[0] > br[0]:
+        tl, br = br, tl
+    if tl[1] > br[1]:
+        tl, br = (tl[0], br[1]), (br[0], tl[1])
+    return [(tl[0], tl[1])], [(br[0], br[1])]
+
+
 
 def load_bounding_boxes_from_csv(csv_file_path):
     with open(csv_file_path, "r") as csv_file:
@@ -196,25 +212,25 @@ for image_file in image_files:
             current_mod_state = 0
         elif key == ord("p"): # Press 'p' to activate positive fine tunning
             current_mod_state = 1
-        elif key == ord("w"):  # Press 'w' key to decrease top coordinate
+        elif key == ord("w"):  # Press 'w' key to increase/decrease top coordinate
             if current_mod_state:
                 increase_top()
             elif not current_mod_state: 
                 decrease_top()
             change_selected_box(key)
-        elif key == ord("s"):  # Press 's' key to increase bottom coordinate
+        elif key == ord("s"):  # Press 's' key to increase/decrease bottom coordinate
             if current_mod_state:
                 increase_bottom()
             elif not current_mod_state:
                 decrease_bottom()
             change_selected_box(key)
-        elif key == ord("a"):  # Press 'a' key to decrease left coordinate
+        elif key == ord("a"):  # Press 'a' key to increase/decrease left coordinate
             if current_mod_state:
-                increase_left
+                increase_left()
             elif not current_mod_state:
                 decrease_left()
             change_selected_box(key)
-        elif key == ord("d"):  # Press 'd' key to increase right coordinate
+        elif key == ord("d"):  # Press 'd' key to increase/decrease right coordinate
             if current_mod_state:
                 increase_right()
             elif not current_mod_state:
