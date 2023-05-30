@@ -14,6 +14,7 @@ current_tl = []
 current_br = []
 current_object = ""
 selected_box_index = -1
+current_mod_state = 1
 
 # Mouse callback function
 def mouse_callback(event, x, y, flags, param):
@@ -89,6 +90,45 @@ def change_selected_box(key):
         cv2.rectangle(img, tl_list[selected_box_index][0], br_list[selected_box_index][0], (255, 0, 0), 2)
     cv2.imshow("Image", img)
 
+def increase_top():
+    global selected_box_index, tl_list
+    if selected_box_index != -1:
+        tl_list[selected_box_index][0] = (tl_list[selected_box_index][0][0], tl_list[selected_box_index][0][1] - 1)
+
+def decrease_top():
+    global selected_box_index, tl_list
+    if selected_box_index != -1:
+        tl_list[selected_box_index][0] = (tl_list[selected_box_index][0][0], tl_list[selected_box_index][0][1] + 1)
+
+def increase_bottom():
+    global selected_box_index, br_list
+    if selected_box_index != -1:
+        br_list[selected_box_index][0] = (br_list[selected_box_index][0][0], br_list[selected_box_index][0][1] + 1)
+
+def decrease_bottom():
+    global selected_box_index, br_list
+    if selected_box_index != -1:
+        br_list[selected_box_index][0] = (br_list[selected_box_index][0][0], br_list[selected_box_index][0][1] - 1)
+
+def increase_right():
+    global selected_box_index, br_list
+    if selected_box_index != -1:
+        br_list[selected_box_index][0] = (br_list[selected_box_index][0][0] + 1, br_list[selected_box_index][0][1])
+
+def decrease_right():
+    global selected_box_index, br_list
+    if selected_box_index != -1:
+        br_list[selected_box_index][0] = (br_list[selected_box_index][0][0] - 1, br_list[selected_box_index][0][1])
+
+def increase_left():
+    global selected_box_index, tl_list
+    if selected_box_index != -1:
+        tl_list[selected_box_index][0] = (tl_list[selected_box_index][0][0] - 1, tl_list[selected_box_index][0][1])
+
+def decrease_left():
+    global selected_box_index, tl_list
+    if selected_box_index != -1:
+        tl_list[selected_box_index][0] = (tl_list[selected_box_index][0][0] + 1, tl_list[selected_box_index][0][1])
 
 # Read images from a folder
 folder_path = "images"  # Replace with the actual folder path
@@ -152,6 +192,34 @@ for image_file in image_files:
             object_list = []
             selected_box_index = -1
             cv2.imshow("Image", img)
+        elif key == ord("n"): # Press 'n' to activate negative fine tunning
+            current_mod_state = 0
+        elif key == ord("p"): # Press 'p' to activate positive fine tunning
+            current_mod_state = 1
+        elif key == ord("w"):  # Press 'w' key to decrease top coordinate
+            if current_mod_state:
+                increase_top()
+            elif not current_mod_state: 
+                decrease_top()
+            change_selected_box(key)
+        elif key == ord("s"):  # Press 's' key to increase bottom coordinate
+            if current_mod_state:
+                increase_bottom()
+            elif not current_mod_state:
+                decrease_bottom()
+            change_selected_box(key)
+        elif key == ord("a"):  # Press 'a' key to decrease left coordinate
+            if current_mod_state:
+                increase_left
+            elif not current_mod_state:
+                decrease_left()
+            change_selected_box(key)
+        elif key == ord("d"):  # Press 'd' key to increase right coordinate
+            if current_mod_state:
+                increase_right()
+            elif not current_mod_state:
+                decrease_right()
+            change_selected_box(key)
         elif key == ord("z"):  # Press 'z' key to save bounding boxes and move to the next image
             csv_rows = zip([image_file] * len(tl_list), tl_list, br_list, object_list)
             csv_writer.writerows(csv_rows)
