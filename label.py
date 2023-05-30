@@ -77,9 +77,9 @@ def delete_selected_box():
 def change_selected_box(key):
     global selected_box_index, img
 
-    if key == ord("w"):  # Press 'w' key to move up
+    if key == ord("."):  # Press '.' key to move up
         selected_box_index = max(selected_box_index - 1, 0)
-    elif key == ord("s"):  # Press 's' key to move down
+    elif key == ord(","):  # Press ',' key to move down
         selected_box_index = min(selected_box_index + 1, len(tl_list) - 1)
 
     img = img_copy.copy()
@@ -127,7 +127,7 @@ for image_file in image_files:
     while True:
         key = cv2.waitKey(1) & 0xFF
 
-        if key == ord("a"):  # Press 'a' key to load bounding boxes from CSV
+        if key == ord("y"):  # Press 'y' key to load bounding boxes from CSV
             yoloV8.create_yolo_boxes(image_file)
             csv_file_path = "yolo_boxes.csv"
             load_bounding_boxes_from_csv(csv_file_path)
@@ -141,9 +141,9 @@ for image_file in image_files:
             cv2.destroyAllWindows()
             exit()
 
-        if key == ord("d"):  # Press 'd' key to delete the selected box
+        if key == ord("e"):  # Press 'e' key to erase the selected box
             delete_selected_box()
-        elif key == ord("w") or key == ord("s"):  # Press 'w' or 's' key to change the selected box
+        elif key == ord(".") or key == ord(","):  # Press '.' or ',' key to change the selected box
             change_selected_box(key)
         elif key == ord("r"):  # Press 'r' key to reset bounding boxes
             img = img_copy.copy()
