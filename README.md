@@ -1,13 +1,13 @@
 # person_autolabeling
 "Person AutoLabeling" automates object detection data labeling using YOLO models. It reads YOLO format data, generates labeled bounding boxes for objects in images, and assigns accurate labels. Simplify your labeling process with this convenient tool powered by YOLO's object detection capabilities.
 
-Install necessary libraries:
+## Install necessary libraries:
 
 ```
 $ pip install -r requirements.txt
 ```
 
-How to use:
+# How to use:
 
 In the code change the file folder_path variable to the location of your image folder, than:
 
